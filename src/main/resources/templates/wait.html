@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>index</title>
+    <script type="text/javascript" src="/static/js/jquery-3.2.1.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="/static/css/demo.css"/>
+    <link type="text/css" rel="stylesheet" href="/static/css/component.css"/>
+    <!--<link type="text/css" rel="stylesheet" href="/static/css/bootstrap.css"/>-->
+
+</head>
+<body>
+<div class="container">
+    <!--<section class="content bgcolor-1">-->
+        <h2 class="nomargin-bottom">正在爬取数据，请稍等</h2>
+    <!--</section>-->
+</div>
+<script type="text/javascript" >
+
+    //关键在这里，Ajax定时访问服务端，不断获取数据
+    var si = setInterval('updateState()', 10000);
+
+    function updateState(){
+        $.ajax({
+            type: 'post',
+            url: '/search/wait',
+            dataType: 'json',
+            data: {
+
+            }
+        }).done(function (data) {
+            console.log('成功收到数据: ' + JSON.stringify(data, null, '  '));
+            var result = data;
+            if (result.ok === "true") {
+                //window.location.href = '/search/show';
+                $(".nomargin-bottom").text("数据爬取完成.....")
+                clearInterval(si);
+            }
+        });
+    }
+
+
+
+</script>
+</body>
+</html>
