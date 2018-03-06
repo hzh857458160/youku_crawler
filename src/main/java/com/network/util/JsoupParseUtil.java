@@ -1,11 +1,9 @@
 package com.network.util;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 
-import com.network.controller.MainController;
+
 import com.network.model.YoukuInfo;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -16,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * 
- * @author He Zhenghan
+ * Created by HanrAx
  *
  */
 public class JsoupParseUtil {
@@ -83,14 +81,13 @@ public class JsoupParseUtil {
 		
 	}
 
-	public static String addYoukuInfo(String url, YoukuInfo youkuInfo) throws IOException{
+	public static void addYoukuInfo(String url, YoukuInfo youkuInfo) throws IOException{
 		//获取请求连接
 		Connection con = Jsoup.connect(url);
 		String value = youkuInfo.postParameter(1);
 		//添加参数
 		con.data("youkuinfovalue", value);
 		Document doc = con.post();
-		return doc.toString();
 	}
 
 
