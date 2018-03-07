@@ -22,7 +22,7 @@ public class ReleaseTimeUtil {
             release_time = m.replaceAll("").trim();
             if(release_time.length()<5){
                 System.out.println("the number is too short");
-                return null;
+                return "no release time";
             }else{
                 return release_time;
             }

@@ -3,9 +3,6 @@ package com.network.util;
 import java.io.IOException;
 
 
-
-import com.network.model.YoukuInfo;
-import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
@@ -38,8 +35,8 @@ public class JsoupParseUtil {
 		}
 		
 		String value = "";
-		int begin_index = 0;
-		int end_index = 0;
+		int begin_index;
+		int end_index;
 		Document doc = Jsoup.connect(url)
 				.userAgent("Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36")
 				.ignoreContentType(true)
@@ -80,33 +77,4 @@ public class JsoupParseUtil {
 
 		
 	}
-
-	public static void addYoukuInfo(String url, YoukuInfo youkuInfo) throws IOException{
-		//获取请求连接
-		Connection con = Jsoup.connect(url);
-		String value = youkuInfo.postParameter(1);
-		//添加参数
-		con.data("youkuinfovalue", value);
-		Document doc = con.post();
-	}
-
-
-	/**
-	 * 从数据库通过url获取指定id的记录
-	 * @param
-	 * @param id
-	 * @return
-	 * @throws IOException
-	 */
-//	public static String getOneYoukuInfo(Integer id) throws IOException {
-////		YoukuInfo youkuInfo = new YoukuInfo();
-//		String url = "http://localhost:8080/youkuinfos/"+id;
-//		Connection con = Jsoup.connect(url);
-//		Document doc = con.get();
-//		return doc.toString();
-//	}
-	/*public static void main(String[] args) {
-		
-	}*/
-
 }

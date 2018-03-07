@@ -29,40 +29,6 @@ public class YoukuInfoController {
     }
 
     /**
-     * 添加一条youkuinfo数据到数据库
-     * @param youkuInfoValue
-     */
-    @PostMapping(value = "/youkuinfos")
-    public void youkuInfoAdd(@RequestParam("youkuinfovalue") String youkuInfoValue){
-        if (youkuInfoValue.contains(",")){
-            String[] value = youkuInfoValue.split(",");
-            if (value.length == 12){
-                YoukuInfo youkuInfo = new YoukuInfo();
-                youkuInfo.setVideoUrl(value[0]);
-                youkuInfo.setVideoName(value[1]);
-                youkuInfo.setVideoType(value[2]);
-                youkuInfo.setVideoIntro(value[3]);
-                youkuInfo.setVideoIntroUrl(value[4]);
-                youkuInfo.setReleaseTime(value[5]);
-                youkuInfo.setAuthorName(value[6]);
-                youkuInfo.setPlayTimes(Integer.parseInt(value[7]));
-                youkuInfo.setLikeTimes(Integer.parseInt(value[8]));
-                youkuInfo.setDislikeTimes(Integer.parseInt(value[9]));
-                youkuInfo.setDownloadUrl(value[10]);
-                youkuInfo.setVideoTheme(value[11]);
-                youkuInfoRepository.save(youkuInfo);
-                logger.info("Add Success");
-            }else{
-                logger.info("paramerter length is "+value.length);
-                logger.info(value.toString());
-            }
-
-        }
-
-
-    }
-
-    /**
      * 删除一条记录
      * @param id
      */

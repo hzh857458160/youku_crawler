@@ -20,23 +20,19 @@ public class YoukuInfo {
 
 	private String videoUrl;		//视频url
 	private String videoName;		//视频名称
-	private String videoType;		//视频类型
 	private String videoIntro;		//视频简介
-	private String videoIntroUrl;	//视频简介获取url（可能为空）
 	private String releaseTime;		//发布时间
 	private String authorName;		//作者昵称
 	private Integer playTimes;		//播放次数
 	private Integer likeTimes;		//点赞次数
 	private Integer dislikeTimes;	//点踩次数
-	//可能用到的属性
-	private String downloadUrl;		//视频下载的url
-	private String videoTheme;		//视频主题
+
 
 	@Override
 	public String toString() {
 		return 	"*********************************"
 				+	"\nvideoUrl: "	+ videoUrl
-				+	"\nvideoName:"	+ videoName		+ "    videoType:"	+ videoType
+				+	"\nvideoName:"	+ videoName
 				+	"\nvideoIntro:"	+ videoIntro
 				+	"\nreleaseTime:"+ releaseTime	+ "    authorName:"	+ authorName	+ "    playTimes:"	+ playTimes
 				+	"\nlike:"		+ likeTimes		+ "    dislike:"	+ dislikeTimes	+ "\n"
@@ -53,16 +49,12 @@ public class YoukuInfo {
 		} else if (opcode == 1) {
 			return videoUrl +
 					"," + videoName +
-					"," + videoType +
 					"," + videoIntro +
-					"," + videoIntroUrl +
 					"," + releaseTime +
 					"," + authorName +
 					"," + playTimes +
 					"," + likeTimes +
-					"," + dislikeTimes +
-					"," + downloadUrl +
-					"," + videoTheme;
+					"," + dislikeTimes;
 		}else{
 			return null;
 		}
@@ -95,13 +87,6 @@ public class YoukuInfo {
 		this.videoName = videoName;
 	}
 
-	public String getVideoType() {
-		return videoType;
-	}
-
-	public void setVideoType(String videoType) {
-		this.videoType = videoType;
-	}
 
 	public String getVideoIntro() {
 		return videoIntro;
@@ -109,14 +94,6 @@ public class YoukuInfo {
 
 	public void setVideoIntro(String videoIntro) {
 		this.videoIntro = videoIntro;
-	}
-
-	public String getVideoIntroUrl() {
-		return videoIntroUrl;
-	}
-
-	public void setVideoIntroUrl(String videoIntroUrl) {
-		this.videoIntroUrl = videoIntroUrl;
 	}
 
 	public String getReleaseTime() {
@@ -159,21 +136,6 @@ public class YoukuInfo {
 		this.dislikeTimes = dislikeTimes;
 	}
 
-	public String getDownloadUrl() {
-		return downloadUrl;
-	}
-
-	public void setDownloadUrl(String downloadUrl) {
-		this.downloadUrl = downloadUrl;
-	}
-
-	public String getVideoTheme() {
-		return videoTheme;
-	}
-
-	public void setVideoTheme(String videoTheme) {
-		this.videoTheme = videoTheme;
-	}
 
 
 
