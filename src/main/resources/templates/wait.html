@@ -18,20 +18,17 @@
 <script type="text/javascript" >
 
     //关键在这里，Ajax定时访问服务端，不断获取数据
-    var si = setInterval('updateState()', 10000);
+    let si = setInterval('updateState()', 10000);
 
     function updateState(){
         $.ajax({
             type: 'post',
             url: '/search/wait',
             dataType: 'json',
-            data: {
-
-            }
+            data: {}
         }).done(function (data) {
             console.log('成功收到数据: ' + JSON.stringify(data, null, '  '));
-            var result = data;
-            if (result.ok === "true") {
+            if (data.attach.ok === "true") {
                 //window.location.href = '/search/show';
                 $(".nomargin-bottom").text("数据爬取完成.....")
                 clearInterval(si);

@@ -10,10 +10,10 @@ spring:
     suffix: .html
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/youkuinfo?characterEncoding=utf8&useSSL=true
-    username: root
-    password: 123456
+    url: jdbc:mysql://120.78.148.229:3306/youku_info?characterEncoding=utf8&useSSL=true
+    username: user_youku_crawler
+    password: hzhssg123
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     show-sql: true

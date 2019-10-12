@@ -9,7 +9,6 @@ import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.processor.PageProcessor;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,21 +16,25 @@ import java.util.List;
  *
  * Created by HanrAx on 2017/12/14 0014.
  */
+
+//TODO 尚未更新最新的搜酷逻辑
 public class YoukuVideoProcessor implements PageProcessor {
-    private final String REGEX_PAGE_URL = "https://www\\.soku\\.com/search_video/\\w+";
+
+    private final String REGEX_PAGE_URL = "https://so\\.youku\\.com/search_video/q_\\w+";
+    private final String REGEX_SEARCH_URL = "https://so\\.youku\\.com/search_video/q_\\w+";
     private final String REGEX_VIDEO_PLAY_URL = "https://v\\.youku\\.com/v_show/\\w+";
     private final String REGEX_VIDEO_REDIRECT_URL = "https://cps\\.youku\\.com/redirect.html?\\w+";
+
     private Site site = Site.me().setRetryTimes(3).setSleepTime(100).setTimeOut(10 * 1000).setCharset("UTF-8")
             .setUserAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36");
 
     static List<YoukuInfo> youkuInfoList = new ArrayList<>();
     private YoukuInfo youkuInfo = new YoukuInfo();
-    private String Searchkey = "";          //搜索关键字
     private String like_url = "https://v.youku.com/action/getVideoPlayInfo?beta&timestamp=1510628914450&vid=replace_vid&param%5B%5D=updown&callback=tuijsonp6";
     private String author_url = "https://v.youku.com/action/sub?beta&callback"
             + 	"=jQuery1112007896143668629563_1510640686538&vid=replace_vid&ownerid=UMjg1MDgwODA%3D";
     //这里使用StringBuffer的原因是这几个字符串会经常变动，使用StringBuffer会比String好一点
-    private StringBuffer cur_page_num_sb 	= new StringBuffer();	//当前页码
+    private StringBuffer curPageNumSb = new StringBuffer();    //当前页码
     private StringBuffer pre_page_num_sb 	= new StringBuffer();	//前一页页码
     private StringBuffer cur_page_url_sb	= new StringBuffer();   //当前网页所属的第一级页面url
 
@@ -51,7 +54,7 @@ public class YoukuVideoProcessor implements PageProcessor {
     private String release_time;            //发布时间url
     private String cur_video_id;		    //当前视频的vid
 
-    private int cur_video_index;		    //当前视频在list中的索引
+    private int curVideoIndex;            //当前视频在list中的索引
     private int first_page_play_time = 0;	//视频列表页第一页的播放时间
     private int page_video_sum = 0;			//当前列表页的视频总数
     private int like_time;                  //视频点赞次数
@@ -60,9 +63,10 @@ public class YoukuVideoProcessor implements PageProcessor {
 
     @Override
     public void process(Page page) {
-        Searchkey = page.getHtml().xpath("//input[@class='sotxt']/@value").toString();
+        //搜索关键字
+        String searchKey = page.getHtml().xpath("//*[@id=\"headq\"]/@value").toString();
 
-        /**
+        /*
          * 第一级页面（视频列表页）
          * 因为webmagic不能重复爬取同一个页面，
          * 所以我把页面跳转逻辑写在了第二级页面以及第三级页面，
@@ -71,15 +75,15 @@ public class YoukuVideoProcessor implements PageProcessor {
         if (page.getUrl().regex(REGEX_PAGE_URL).match()) {
 
             try {
-                cur_video_index = 0;
-                cur_page_num_sb.setLength(0);
-                cur_page_num_sb.append(page.getHtml().xpath("//li[@class='current']/span/text()").toString());
+                curVideoIndex = 0;
+                curPageNumSb.setLength(0);
+                curPageNumSb.append(page.getHtml().xpath("//li[@class='current']/span/text()").toString());
                 cur_page_url_sb.setLength(0);
                 cur_page_url_sb.append(page.getUrl().toString());
                 page_video_sum = 0;
 
                 //视频列表页的第一页与其他页排版不同，所以单独分为两个解析方法
-                if ("1".equals(cur_page_num_sb.toString())) {
+                if ("1".equals(curPageNumSb.toString())) {
                     //获取当前列表页视频总数
                     page_video_sum = page.getHtml().xpath("//div[@class='s_dir']").all().size();
                     //视频信息
@@ -87,7 +91,7 @@ public class YoukuVideoProcessor implements PageProcessor {
                     video_name_list = page.getHtml().xpath("//h2[@class='base_name']/a[1]/@_log_title").all();
                     play_time_list = page.getHtml().xpath("//span[@class='num']/a/text()").all();
                     play_time_unit_list = page.getHtml().xpath("//span[@class='num']/text()").all();
-                    page.addTargetRequest(video_url_list.get(cur_video_index));
+                    page.addTargetRequest(video_url_list.get(curVideoIndex));
 
                     //第二页及之后的视频列表页解析
                 } else {
@@ -98,7 +102,7 @@ public class YoukuVideoProcessor implements PageProcessor {
                     video_name_list = page.getHtml().xpath("//div[@class='sk-vlist clearfix']/div/div[4]/div[1]/a/@title").all();
                     play_time_list = page.getHtml().xpath("//div[@class='sk-vlist clearfix']/div/div[4]/div[2]/div[2]/span[1]/text()").all();
                     author_name_list = page.getHtml().xpath("//div[@class='sk-vlist clearfix']/div/div[4]/div[2]/div[1]/span[1]/a/text()").all();
-                    page.addTargetRequest(video_url_list.get(cur_video_index));
+                    page.addTargetRequest(video_url_list.get(curVideoIndex));
 
                 }
             } catch (Exception e) {
@@ -106,7 +110,7 @@ public class YoukuVideoProcessor implements PageProcessor {
             }
 
         }
-        /**
+        /*
          * 第二级页面（视频播放页）
          * 在这个页面我获取剩余大部分视频信息，并存到model中
          * 如果还有视频简介页面，则下一个页面的跳转放进第三级页面
@@ -129,7 +133,7 @@ public class YoukuVideoProcessor implements PageProcessor {
                         JsoupParseUtil.parseValueFromUrl(request_like_url, "dislike"));
 
                 //视频播放页的第一页中
-                if ("1".equals(cur_page_num_sb.toString())) {
+                if ("1".equals(curPageNumSb.toString())) {
                     //作者昵称需要动态请求，发布时间直接获取
                     author_name     = JsoupParseUtil.parseValueFromUrl(request_author_url, "author");
                     release_time    = page.getHtml().xpath("//span[@class='cl-lv-2']/text()").toString();
@@ -149,13 +153,13 @@ public class YoukuVideoProcessor implements PageProcessor {
 
                 } else {//视频列表页的第二页及其他
                     release_time = page.getHtml().xpath("//span[@class='bold mr3']/text()").toString();
-                    youkuInfo.setPlayTimes(PlayTimeUtil.parsingPlayTime(play_time_list.get(cur_video_index)));
-                    youkuInfo.setAuthorName(author_name_list.get(cur_video_index));
+                    youkuInfo.setPlayTimes(PlayTimeUtil.parsingPlayTime(play_time_list.get(curVideoIndex)));
+                    youkuInfo.setAuthorName(author_name_list.get(curVideoIndex));
                 }
 
 
-                youkuInfo.setVideoUrl(video_url_list.get(cur_video_index));
-                youkuInfo.setVideoName(video_name_list.get(cur_video_index));
+                youkuInfo.setVideoUrl(video_url_list.get(curVideoIndex));
+                youkuInfo.setVideoName(video_name_list.get(curVideoIndex));
                 youkuInfo.setLikeTimes(like_time);
                 youkuInfo.setDislikeTimes(dislike_time);
                 youkuInfo.setReleaseTime(ReleaseTimeUtil.parseReleaseTime(release_time));
@@ -169,7 +173,7 @@ public class YoukuVideoProcessor implements PageProcessor {
                 }
                 page.putField("youkuInfo", youkuInfo);
                 youkuInfoList.add(youkuInfo);
-                cur_video_index++;
+                curVideoIndex++;
                 nextPageRedirect(page);
 
 
@@ -177,7 +181,7 @@ public class YoukuVideoProcessor implements PageProcessor {
                 printDebugInfo(page, 2);
                 if ("Page fault".equals(e.getMessage())) {
                     page.setSkip(true);
-                    cur_video_index++;
+                    curVideoIndex++;
                     nextPageRedirect(page);
 
                 }
@@ -191,7 +195,7 @@ public class YoukuVideoProcessor implements PageProcessor {
                 //因为视频列表页的第一页会有其他视频网站（不属于优酷）的视频外链，不属于解析范围
                 if(page.toString().contains("/detail/show")
                         ||page.getUrl().toString().contains("list.youku.com/show")){
-                    cur_video_index++;
+                    curVideoIndex++;
                 }
                 nextPageRedirect(page);
                 page.setSkip(true);
@@ -211,30 +215,30 @@ public class YoukuVideoProcessor implements PageProcessor {
         return site;
     }
 
-    /**
+    /*
      * 判断当前视频列表页内视频是否处理完成
      * 进行下一个视频索引跳转或者下一页视频列表页跳转
      * @param page
      */
     private void nextPageRedirect(Page page){
         youkuInfo = new YoukuInfo();
-        System.out.println(cur_video_index+"---------------"+page_video_sum);
-        if(cur_video_index >= page_video_sum){
-            System.out.println("Page "+ cur_page_num_sb.toString() +" Completed");
-            if("2".equals(cur_page_num_sb.toString())){
+        System.out.println(curVideoIndex + "---------------" + page_video_sum);
+        if (curVideoIndex >= page_video_sum) {
+            System.out.println("Page " + curPageNumSb.toString() + " Completed");
+            if ("2".equals(curPageNumSb.toString())) {
                 System.out.println("All Pages Completed");
                 MainController.finishFlag = true;
             }else{
                 cur_page_url_sb.setLength(cur_page_url_sb.length()-1);
-                String next_page = cur_page_url_sb.append(Integer.parseInt(cur_page_num_sb.toString())+1).toString();
+                String next_page = cur_page_url_sb.append(Integer.parseInt(curPageNumSb.toString()) + 1).toString();
                 page.addTargetRequest(next_page);
             }
             pre_page_num_sb.setLength(0);
-            pre_page_num_sb.append(cur_page_num_sb);
+            pre_page_num_sb.append(curPageNumSb);
 
         }else{
             System.out.println("redirect to the next video");
-            page.addTargetRequest(video_url_list.get(cur_video_index));
+            page.addTargetRequest(video_url_list.get(curVideoIndex));
 
         }
     }
@@ -243,7 +247,7 @@ public class YoukuVideoProcessor implements PageProcessor {
     private void printDebugInfo(Page page, int pageLevel){
         System.out.println("------------------DebugInfo------------------");
         System.out.println("video url:" + page.getUrl().toString());
-        System.out.println("video page number:" + cur_page_num_sb.toString() + "   page level:"+pageLevel);
+        System.out.println("video page number:" + curPageNumSb.toString() + "   page level:" + pageLevel);
         if (youkuInfo.getVideoUrl()!= null){
             System.out.println(youkuInfo);
         }

@@ -12,12 +12,11 @@ function sendKeyByJson() {
             url: '/search',
             dataType: 'json',
             data: {
-                "search_key": key
+                "SEARCH_KEY": key
             }
         }).done(function (data) {
                 console.log('成功, 收到的数据: ' + JSON.stringify(data, null, '  '));
-                var result = data;
-                if (result.ok === "true") {
+            if (data.errcode === "0") {
                     console.log("后端成功收到key");
                     window.location.href = '/search/wait';
                 } else {
