@@ -3,7 +3,7 @@
  */
 
 function sendKeyByJson() {
-    var key = document.getElementById("input-1").value;
+    let key = document.getElementById("input-1").value;
     if(!checkInputKey(key)){
         alert("关键字不能为空哦");
     }else{
