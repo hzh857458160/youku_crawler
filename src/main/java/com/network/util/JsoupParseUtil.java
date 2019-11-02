@@ -1,12 +1,10 @@
 package com.network.util;
 
-import java.io.IOException;
-
-
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 
 /**
@@ -14,9 +12,9 @@ import org.slf4j.LoggerFactory;
  * Created by HanrAx
  *
  */
+@Slf4j
 public class JsoupParseUtil {
 
-	private final static Logger logger = LoggerFactory.getLogger(JsoupParseUtil.class);
 	/**
 	 * 一个功能强大的方法，可以通过网页获取并解析下面几个东西
 	 * @param url url为获取该属性对应得网址，而key值为表中任意 ֵ["like","dislike","author","videoId"]
@@ -45,7 +43,7 @@ public class JsoupParseUtil {
 
 		
 		if(!(docs.contains("videoId")||docs.contains("up")||docs.contains("down")||docs.contains("channelname"))){
-			logger.info("docs: \n"+docs);
+			log.info("docs: \n" + docs);
 			System.out.println("web don't contain this value: "+key);
 			return null;
 		}

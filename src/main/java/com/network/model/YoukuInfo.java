@@ -26,8 +26,8 @@ public class YoukuInfo {
 	private String videoIntro;		//视频简介
 	private String releaseTime;		//发布时间
 	private String authorName;		//作者昵称
-	private Integer playTimes;		//播放次数
-	private Integer likeTimes;		//点赞次数
-	private Integer dislikeTimes;	//点踩次数
+//	private Integer playTimes;		//播放次数
+//	private Integer likeTimes;		//点赞次数
+//	private Integer dislikeTimes;	//点踩次数
 	
 }
